@@ -1,5 +1,6 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -8,10 +9,9 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemOwnerDto;
 import ru.practicum.shareit.item.dto.NewItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -25,7 +25,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/{itemId}")
-    public Item getItemById(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,@Positive  @PathVariable Long itemId) {
+    public ItemDto getItemById(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @Positive @PathVariable Long itemId) {
         return itemService.getItemById(userId, itemId);
     }
 
@@ -35,19 +35,19 @@ public class ItemController {
     }
 
     @PostMapping
-    public Item addNewItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
-                    @RequestBody NewItemDto item) {
+    public ItemDto addNewItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
+                              @Valid @RequestBody NewItemDto item) {
         return itemService.addNewItem(userId, item);
     }
 
     @PatchMapping("/{itemId}")
-    public Item updateItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @Positive @PathVariable Long itemId,
-                           @RequestBody UpdateItemDto item) {
+    public ItemDto updateItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @Positive @PathVariable Long itemId,
+                              @RequestBody UpdateItemDto item) {
         return itemService.updateItem(userId, itemId, item);
     }
 
     @GetMapping("/search")
-    public Collection<Item> searchItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text) {
+    public Collection<ItemDto> searchItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text) {
         return itemService.searchItem(userId, text);
     }
 }

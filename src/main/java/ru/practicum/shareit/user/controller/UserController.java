@@ -37,12 +37,12 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@Positive @PathVariable Long userId, @Valid @RequestBody UserUpdate user) {
+    public UserDto updateUser(@Positive @PathVariable Long userId, @RequestBody UserUpdate user) {
         return userService.updateUser(userId, user);
     }
 
     @GetMapping("/{userId}")
-    public User findUserById(@Positive @PathVariable Long userId) {
+    public UserDto findUserById(@Positive @PathVariable Long userId) {
         return userService.findUserById(userId);
     }
 

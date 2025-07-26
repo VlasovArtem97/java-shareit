@@ -12,6 +12,6 @@ public interface UserService {
     List<UserDto> getAllUsers();
     UserDto saveUser(UserCreate user);
     UserDto updateUser(Long userId, UserUpdate user);
-    User findUserById(Long userId);
+    UserDto findUserById(Long userId);
     void deleteUser(Long userId);
 }

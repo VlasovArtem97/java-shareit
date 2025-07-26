@@ -35,15 +35,16 @@ class UserServiceImpl implements UserService {
     public UserDto saveUser(UserCreate user) {
         log.info("Получен запрос на добавление пользователя: {}", user);
         User userCreate = UserMapper.mapToNewUser(user);
-        repository.save(userCreate);
-        log.debug("Новый пользователь: {}", userCreate);
-        return UserMapper.mapToUserDto(userCreate);
+        User newUser = repository.save(userCreate);
+        UserDto userDto = UserMapper.mapToUserDto(newUser);
+        log.debug("Новый пользователь: {}", userDto);
+        return userDto;
     }
 
     @Override
     public UserDto updateUser(Long userId, UserUpdate user) {
         log.info("Получен запрос на обновления данных пользователя: {}", user);
-        User oldUser = findUserById(userId);
+        User oldUser = UserMapper.mapToUserFromUserDto(findUserById(userId));
         User userMapUpdate = UserMapper.mapToUpdateUser(user, oldUser);
         User userUpdate = repository.updateUser(userMapUpdate);
         log.debug("Обновленный пользователь: {}", userUpdate);
@@ -52,14 +53,18 @@ class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
+        log.info("Получен запрос на удаление пользователя с id - {}", userId);
         findUserById(userId);
         repository.deleteUser(userId);
     }
 
     @Override
-    public User findUserById(Long userId) {
+    public UserDto findUserById(Long userId) {
         log.info("Получен запрос на поиск пользователя по id - {}", userId);
-        return repository.findUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " +
+        User user = repository.findUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " +
                 userId + " не найден"));
+        UserDto userDto = UserMapper.mapToUserDto(user);
+        log.debug("Найден пользователь: {}", userDto);
+        return userDto;
     }
 }

@@ -11,5 +11,6 @@ public class UserCreate {
     @Email
     private String email;
     @NotNull
+    @NotBlank
     private String name;
 }
