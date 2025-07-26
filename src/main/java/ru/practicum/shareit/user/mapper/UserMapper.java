@@ -14,10 +14,10 @@ public class UserMapper {
     }
 
     public static User mapToUpdateUser(UserUpdate updateUser, User user) {
-        if(updateUser.getName() != null && !updateUser.getName().isBlank()) {
+        if (updateUser.getName() != null && !updateUser.getName().isBlank()) {
             user.setName(updateUser.getName());
         }
-        if(updateUser.getEmail() != null && !updateUser.getEmail().isBlank()) {
+        if (updateUser.getEmail() != null && !updateUser.getEmail().isBlank()) {
             user.setEmail(updateUser.getEmail());
         }
         return user;

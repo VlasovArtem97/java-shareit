@@ -2,10 +2,12 @@ package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.ConflictException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {
@@ -57,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .filter(user1 -> user1.getEmail().equalsIgnoreCase(user.getEmail())
                         && !user1.getId().equals(user.getId()))
                 .findFirst();
-        if(userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             throw new ConflictException("Пользователь с email: " + user.getEmail() + " уже существует");
         }
     }
