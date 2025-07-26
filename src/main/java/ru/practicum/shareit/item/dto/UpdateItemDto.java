@@ -3,15 +3,12 @@ package ru.practicum.shareit.item.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
-public class ItemDto {
+public class UpdateItemDto {
 
-    private Long id;
-    private Long userId;
+    @NotNull
     private String name;
+    @NotNull
     private String description;
     private Boolean available;
 }
