@@ -68,4 +68,10 @@ public class HandlerException {
         log.error("Ошибка в заголовке запроса: {}", e.getMessage());
         return Map.of("error", e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleException(final Exception e) {
+        log.info("Ошибка сервера - {}", e.getMessage());
+        return Map.of("Ошибка сервера", e.getMessage());
+    }
 }

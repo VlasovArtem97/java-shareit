@@ -40,9 +40,10 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Collection<Item> searchItem(String text) {
+        String textLower = text.toLowerCase();
         return items.values().stream()
                 .filter(item -> (item.getName().toLowerCase().contains(text.toLowerCase()))
-                        || (item.getDescription().toLowerCase().contains(text.toLowerCase())))
+                        || (item.getDescription().toLowerCase().contains(textLower)))
                 .filter(item -> item.getAvailable().equals(Boolean.TRUE))
                 .toList();
     }
