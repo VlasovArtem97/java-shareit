@@ -34,6 +34,28 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Добавил зависимость jpa -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- Добавил зависимость dsl -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<classifier>jakarta</classifier>
+			<version>5.1.0</version>
+		</dependency>
+
+		<!-- Добавил зависимость логирования запросов -->
+		<dependency>
+			<groupId>org.zalando</groupId>
+			<artifactId>logbook-spring-boot-starter</artifactId>
+			<version>3.7.2</version>
+		</dependency>
+
+		<!-- Закончил добавление зависимости -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -71,6 +93,33 @@
 			</resource>
 		</resources>
 		<plugins>
+
+			<!-- Добавил билд dsl -->
+					<plugin>
+						<groupId>com.mysema.maven</groupId>
+						<artifactId>apt-maven-plugin</artifactId>
+						<version>1.1.3</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>process</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>target/generated-sources/java</outputDirectory>
+									<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>com.querydsl</groupId>
+								<artifactId>querydsl-apt</artifactId>
+								<classifier>jakarta</classifier>
+								<version>5.1.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+			<!-- Закончил билд dsl -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

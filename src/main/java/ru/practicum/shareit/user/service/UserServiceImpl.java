@@ -3,6 +3,8 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserCreate;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -16,9 +18,11 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers() {
         log.info("Получен запрос на получения списка всех пользователей");
@@ -32,9 +36,13 @@ class UserServiceImpl implements UserService {
     @Override
     public UserDto saveUser(UserCreate user) {
         log.info("Получен запрос на добавление пользователя: {}", user);
-        User userCreate = UserMapper.mapToNewUser(user);
-        User newUser = repository.save(userCreate);
-        UserDto userDto = UserMapper.mapToUserDto(newUser);
+        User newUser = UserMapper.mapToNewUser(user);
+        if (repository.existsByEmail(newUser.getEmail())) {
+            log.error("При добавлении нового Пользователя, указанная электронная почта - {} уже существует",
+                    newUser.getEmail());
+            throw new ConflictException("Пользователь с email: " + newUser.getEmail() + " уже существует");
+        }
+        UserDto userDto = UserMapper.mapToUserDto(repository.save(newUser));
         log.debug("Новый пользователь: {}", userDto);
         return userDto;
     }
@@ -42,9 +50,21 @@ class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(Long userId, UserUpdate user) {
         log.info("Получен запрос на обновления данных пользователя: {}", user);
-        User oldUser = UserMapper.mapToUserFromUserDto(findUserById(userId));
-        User userMapUpdate = UserMapper.mapToUpdateUser(user, oldUser);
-        User userUpdate = repository.updateUser(userMapUpdate);
+        User oldUser = returnUserFindById(userId);
+        if (user.getName() != null && !user.getName().isBlank()) {
+            oldUser.setName(user.getName());
+        }
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            if (!user.getEmail().equalsIgnoreCase(oldUser.getEmail())) {
+                if (repository.existsByEmailAndIdNot(user.getEmail(), userId)) {
+                    log.error("При обновлении данных Пользователя, указанная электронная почта - {} уже существует",
+                            user.getEmail());
+                    throw new ConflictException("Пользователь с email: " + user.getEmail() + " уже существует");
+                }
+            }
+            oldUser.setEmail(user.getEmail());
+        }
+        User userUpdate = repository.save(oldUser);
         log.debug("Обновленный пользователь: {}", userUpdate);
         return UserMapper.mapToUserDto(userUpdate);
     }
@@ -53,16 +73,24 @@ class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         log.info("Получен запрос на удаление пользователя с id - {}", userId);
         findUserById(userId);
-        repository.deleteUser(userId);
+        repository.deleteById(userId);
     }
+
 
     @Override
     public UserDto findUserById(Long userId) {
         log.info("Получен запрос на поиск пользователя по id - {}", userId);
-        User user = repository.findUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " +
+        User user = repository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id " +
                 userId + " не найден"));
         UserDto userDto = UserMapper.mapToUserDto(user);
         log.debug("Найден пользователь: {}", userDto);
         return userDto;
     }
+
+    @Override
+    public User returnUserFindById(Long userId) {
+        UserDto userDto = findUserById(userId);
+        return UserMapper.mapToUserFromUserDto(userDto);
+    }
+
 }

@@ -74,4 +74,11 @@ public class HandlerException {
         log.info("Ошибка сервера - {}", e.getMessage());
         return Map.of("Ошибка сервера", e.getMessage());
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleIllegalState(final IllegalStateException e) {
+        log.error("Обнаружена IllegalStateException - {}", e.getMessage());
+        return Map.of("Ошибка состояния", e.getMessage());
+    }
 }
