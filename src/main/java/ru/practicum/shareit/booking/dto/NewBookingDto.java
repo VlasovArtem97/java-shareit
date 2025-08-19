@@ -1,12 +1,14 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.Data;
-import ru.practicum.shareit.item.model.Item;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@ToString
 public class NewBookingDto {
+
     private LocalDateTime start;
 
     private LocalDateTime end;

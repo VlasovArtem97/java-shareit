@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.dto;
 
-import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.model.Item;
@@ -10,8 +9,12 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-    public class BookingDto {
+@EqualsAndHashCode(of = "id")
+public class BookingDto {
 
     private long id;
 

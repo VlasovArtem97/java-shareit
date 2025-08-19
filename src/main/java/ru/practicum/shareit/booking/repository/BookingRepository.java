@@ -125,21 +125,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "OR ( (b.status = 'WAITING' OR b.status = 'APPROVED') AND b.start > :now ) )")
     List<Booking> findAllByItemIds(@Param("itemIds") List<Long> itemIds, @Param("now") LocalDateTime now);
 
-    @Query("SELECT b FROM Booking b " +
-            "JOIN FETCH b.item i " +
-            "WHERE i.id = :itemId " +
-            "AND ( (b.status = 'APPROVED' AND b.end < :now) " +
-            "OR ( (b.status = 'WAITING' OR b.status = 'APPROVED') AND b.start > :now ) )")
-    List<Booking> findBookingByItemId(@Param("itemId") Long itemId, @Param("now") LocalDateTime now);
-
-    @Query("SELECT b FROM Booking b " +
-            "JOIN FETCH b.item i " +
-            "JOIN FETCH b.booker " +
-            "WHERE i.user.id = :userId " +
-            "AND ( (b.status = 'APPROVED' AND b.end < :now) " +
-            "OR ( (b.status = 'WAITING' OR b.status = 'APPROVED') AND b.start > :now ) )")
-    List<Booking> findByUserId(@Param("userId") Long userId, @Param("now") LocalDateTime now);
-
     @Query("select b from Booking b " +
             "WHERE b.booker.id = :userId " +
             "AND b.status = 'APPROVED' " +
@@ -155,7 +140,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN FETCH b.booker boo " +
             "WHERE u.id = :userId " +
             "AND b.id = :bookingId")
-    Optional<Booking> findBookingByIdAndBookerId(@Param("userId") Long userId, @Param("bookingId") Long bookingId);
+    Optional<Booking> findBookingByIdAndItemUserId(@Param("userId") Long userId, @Param("bookingId") Long bookingId);
 
     @Query("select b from Booking b " +
             "JOIN FETCH b.item i " +

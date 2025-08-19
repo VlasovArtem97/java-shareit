@@ -76,7 +76,7 @@ class UserServiceImpl implements UserService {
         repository.deleteById(userId);
     }
 
-
+    @Transactional(readOnly = true)
     @Override
     public UserDto findUserById(Long userId) {
         log.info("Получен запрос на поиск пользователя по id - {}", userId);
@@ -87,10 +87,10 @@ class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public User returnUserFindById(Long userId) {
         UserDto userDto = findUserById(userId);
         return UserMapper.mapToUserFromUserDto(userDto);
     }
-
 }

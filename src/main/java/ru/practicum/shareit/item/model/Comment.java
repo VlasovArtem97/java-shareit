@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;

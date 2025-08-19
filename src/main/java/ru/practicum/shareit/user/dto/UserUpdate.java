@@ -1,13 +1,10 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
-@Builder
 public class UserUpdate {
     private String email;
     private String name;

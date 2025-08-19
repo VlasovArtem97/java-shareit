@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.service.ItemBookingCommitService;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/items")
@@ -17,15 +19,16 @@ import java.util.Collection;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemBookingCommitService itemBookingCommitService;
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @Positive @PathVariable Long itemId) {
-        return itemService.getItemById(userId, itemId);
+        return itemBookingCommitService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public Collection<ItemOwnerDto> getItemOwner(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getItemOwner(userId);
+    public List<ItemDto> getItemOwner(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemBookingCommitService.getItemOwnerById(userId);
     }
 
     @PostMapping
@@ -41,7 +44,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> searchItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text) {
+    public Collection<ItemDtoSearch> searchItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text) {
         return itemService.searchItem(userId, text);
     }
 
@@ -49,6 +52,6 @@ public class ItemController {
     public CommentDto addComment(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                  @Positive @PathVariable Long itemId,
                                  @Valid @RequestBody NewCommentDto newCommentDto) {
-        return itemService.addComment(userId, itemId, newCommentDto);
+        return itemBookingCommitService.addComment(userId, itemId, newCommentDto);
     }
 }
