@@ -1,41 +1,29 @@
 package ru.practicum.shareit.item.mapper;
 
-import lombok.experimental.UtilityClass;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.NewItemDto;
-import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
-@UtilityClass
-public class ItemMapper {
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
 
-    public static Item mapToItem(NewItemDto itemDto) {
+    ItemDto toItemDto(Item item);
+
+    @Mapping(source = "user", target = "user")
+    @Mapping(source = "itemDto.id", target = "id")
+    @Mapping(source = "itemDto.name", target = "name")
+    Item toItem(ItemDto itemDto, User user);
+
+    default Item toItemFromItemUpdate(ItemDto itemDto, Item item) {
         return Item.builder()
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .build();
-    }
-
-    public static Item mapToItemFromUpdateItemDto(UpdateItemDto updateItemDto, Item item) {
-        if (updateItemDto.getName() != null && !updateItemDto.getName().isBlank()) {
-            item.setName(updateItemDto.getName());
-        }
-        if (updateItemDto.getDescription() != null && !updateItemDto.getDescription().isBlank()) {
-            item.setDescription(updateItemDto.getDescription());
-        }
-        if (updateItemDto.getAvailable() != null) {
-            item.setAvailable(updateItemDto.getAvailable());
-        }
-        return item;
-    }
-
-    public static ItemDto mapToItemDto(Item item) {
-        return ItemDto.builder()
                 .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
+                .name(itemDto.getName() != null && !itemDto.getName().isBlank() ? itemDto.getName() : item.getName())
+                .description(itemDto.getDescription() != null && !itemDto.getDescription().isBlank() ?
+                        itemDto.getDescription() : item.getDescription())
+                .available(itemDto.getAvailable() != null ? itemDto.getAvailable() : item.getAvailable())
+                .user(item.getUser())
                 .build();
     }
 }

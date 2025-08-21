@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemSearch;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -31,6 +33,8 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
+    private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
 
 
     @Override
@@ -57,33 +61,32 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public CommentDto addComment(User user, Item item, NewCommentDto newCommentDto) {
-        Comment comment = commentRepository.save(CommentMapper.mapToCommentFromNewCommentDto(user, item, newCommentDto));
+    public CommentDto addComment(User user, Item item, CommentDto newCommentDto) {
+        Comment comment = commentRepository.save(commentMapper.toComment(newCommentDto, user, item));
         log.debug("Добавленный комментарий: {}", comment);
-        return CommentMapper.mapToCommentDtoFromComment(comment);
+        return commentMapper.toCommentDto(comment);
     }
 
     @Transactional
     @Override
-    public ItemDto addNewItem(Long userId, NewItemDto item) {
+    public ItemDto addNewItem(Long userId, ItemDto item) {
         log.info("Получен запрос на добавление нового Item: {}, пользователем с id - {}", item, userId);
         User user = userService.returnUserFindById(userId);
-        Item itemNew = ItemMapper.mapToItem(item);
-        itemNew.setUser(user);
-        ItemDto addedItem = ItemMapper.mapToItemDto(itemRepository.save(itemNew));
+        Item itemNew = itemMapper.toItem(item, user);
+        ItemDto addedItem = itemMapper.toItemDto(itemRepository.save(itemNew));
         log.debug("Добавленный Item: {}", addedItem);
         return addedItem;
     }
 
     @Transactional
     @Override
-    public ItemDto updateItem(Long userId, Long itemId, UpdateItemDto item) {
+    public ItemDto updateItem(Long userId, Long itemId, ItemDto item) {
         log.info("Получен запрос на обновление данных Item: {}", item);
         userService.returnUserFindById(userId);
         Item itemOld = returnFindItemById(itemId);
         if (itemOld.getUser().getId().equals(userId)) {
-            Item updateItem = ItemMapper.mapToItemFromUpdateItemDto(item, itemOld);
-            ItemDto mapToItemDto = ItemMapper.mapToItemDto(itemRepository.save(updateItem));
+            Item updateItem = itemMapper.toItemFromItemUpdate(item, itemOld);
+            ItemDto mapToItemDto = itemMapper.toItemDto(itemRepository.save(updateItem));
             log.debug("Обновленный Item: {}", mapToItemDto);
             return mapToItemDto;
         } else {
@@ -94,13 +97,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDtoSearch> searchItem(Long userId, String text) {
+    public Collection<ItemSearch> searchItem(Long userId, String text) {
         log.info("Получен запрос от пользователя c id - {} на поиск item в соответствии с - {}", userId, text);
         userService.returnUserFindById(userId);
         if (text.isBlank()) {
             return new ArrayList<>();
         } else {
-            Collection<ItemDtoSearch> itemsDto = itemRepository.search(text);
+            Collection<ItemSearch> itemsDto = itemRepository.search(text);
             log.debug("Список Item: {}", itemsDto);
             return itemsDto;
         }

@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.NewCommentDto;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface ItemBookingCommitService {
 
     List<ItemDto> getItemOwnerById(Long userId);
 
-    CommentDto addComment(Long userId, Long itemId, NewCommentDto newCommentDto);
+    CommentDto addComment(Long userId, Long itemId, CommentDto newCommentDto);
 
 
 }

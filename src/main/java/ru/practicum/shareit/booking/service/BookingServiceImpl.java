@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
@@ -32,10 +31,11 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemService itemService;
     private final UserService userService;
+    private final BookingMapper bookingMapper;
 
     @Transactional
     @Override
-    public BookingDto addBooking(Long userId, NewBookingDto newBookingDto) {
+    public BookingDto addBooking(Long userId, BookingDto newBookingDto) {
         log.info("Получен запрос на booking Item - {} от пользователя с id - {}", newBookingDto, userId);
         User user = userService.returnUserFindById(userId);
         Item item = itemService.returnFindItemById(newBookingDto.getItemId());
@@ -44,10 +44,10 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalStateException("Item для бронирования недоступен");
         }
         validateDateTime(newBookingDto);
-        Booking booking = BookingMapper.mapToBookingFromNewBookingDto(newBookingDto, item, user);
+        Booking booking = bookingMapper.toBooking(newBookingDto, user, item);
         Booking newBooking = bookingRepository.save(booking);
         log.info("Создан новый объект Booking: {}", newBooking);
-        return BookingMapper.mapToBookingDtoFromBooking(newBooking);
+        return bookingMapper.toBookingDto(newBooking);
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
         }
         Booking bookingUpdateStatus = bookingRepository.save(booking);
         log.debug("Статус Booking обновлен: {}", bookingUpdateStatus);
-        return BookingMapper.mapToBookingDtoFromBooking(bookingUpdateStatus);
+        return bookingMapper.toBookingDto(bookingUpdateStatus);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findBookingByIdAndBookerIdAndItemUserId(userId, bookingId)
                 .orElseThrow(() -> new ConflictException("Информация о бронировании может быть предоставлена " +
                         "только владельцу Item либо Создателю Booking"));
-        return BookingMapper.mapToBookingDtoFromBooking(booking);
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
         };
         log.debug("Список booking - {} пользователя с id - {}", bookings, userId);
         return bookings.stream()
-                .map(BookingMapper::mapToBookingDtoFromBooking)
+                .map(bookingMapper::toBookingDto)
                 .toList();
     }
 
@@ -133,7 +133,7 @@ public class BookingServiceImpl implements BookingService {
         };
         log.debug("Размер списка booking - {} пользователя с id - {}", bookings.size(), userId);
         return bookings.stream()
-                .map(BookingMapper::mapToBookingDtoFromBooking)
+                .map(bookingMapper::toBookingDto)
                 .toList();
 
     }
@@ -143,13 +143,8 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findBookingForComment(userId, itemId, now);
     }
 
-    private void validateDateTime(NewBookingDto newBookingDto) {
+    private void validateDateTime(BookingDto newBookingDto) {
         LocalDateTime now = LocalDateTime.now().minusSeconds(5);
-        if (newBookingDto.getStart() == null || newBookingDto.getEnd() == null) {
-            log.error("Дата начала(конец) бронирования должна быть указана: начала - {}, конец - {}",
-                    newBookingDto.getStart(), newBookingDto.getEnd());
-            throw new ConflictException("Дата начала(конец) бронирования должна быть указана");
-        }
         if (newBookingDto.getStart().isBefore(now)) {
             log.error("Дата начала бронирования не должна быть указана в прошедшем времени: начала - {}",
                     newBookingDto.getStart());

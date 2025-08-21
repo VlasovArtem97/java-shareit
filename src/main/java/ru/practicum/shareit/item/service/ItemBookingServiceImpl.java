@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.NewCommentDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -30,13 +29,15 @@ public class ItemBookingServiceImpl implements ItemBookingCommitService {
     private final BookingService bookingService;
     private final UserService userService;
     private final ItemService itemService;
+    private final CommentMapper commentMapper;
+    private final ItemMapper itemMapper;
 
     @Override
     public List<ItemDto> getItemOwnerById(Long userId) {
         log.info("Получен запрос на получения списка Item пользователя с id - {}", userId);
         userService.returnUserFindById(userId);
         List<ItemDto> itemOwner = itemService.getItemByUserId(userId).stream()
-                .map(ItemMapper::mapToItemDto)
+                .map(itemMapper::toItemDto)
                 .toList();
         List<Long> itemIds = itemOwner.stream()
                 .map(ItemDto::getId)
@@ -46,7 +47,7 @@ public class ItemBookingServiceImpl implements ItemBookingCommitService {
         for (ItemDto item : itemOwner) {
             Booking booking = bookingMap.get(item.getId());
             List<CommentDto> commentsItem = comments.getOrDefault(item.getId(), Collections.emptyList()).stream()
-                    .map(CommentMapper::mapToCommentDtoFromComment)
+                    .map(commentMapper::toCommentDto)
                     .toList();
             if (booking != null) {
                 item.setLastBooking(booking.getEnd());
@@ -68,9 +69,9 @@ public class ItemBookingServiceImpl implements ItemBookingCommitService {
         Item item = itemService.returnFindItemById(itemId);
         List<CommentDto> comments = itemService.findAllCommentsItems(List.of(itemId))
                 .getOrDefault(item.getId(), Collections.emptyList()).stream()
-                .map(CommentMapper::mapToCommentDtoFromComment)
+                .map(commentMapper::toCommentDto)
                 .toList();
-        ItemDto itemDto = ItemMapper.mapToItemDto(item);
+        ItemDto itemDto = itemMapper.toItemDto(item);
         itemDto.setComments(comments);
         log.debug("Найденный item: {}", itemDto);
         return itemDto;
@@ -78,10 +79,10 @@ public class ItemBookingServiceImpl implements ItemBookingCommitService {
 
     @Transactional
     @Override
-    public CommentDto addComment(Long userId, Long itemId, NewCommentDto newCommentDto) {
+    public CommentDto addComment(Long userId, Long itemId, CommentDto newCommentDto) {
         User user = userService.returnUserFindById(userId);
         Item item = itemService.returnFindItemById(itemId);
-        List<Booking> bookings = bookingService.findBookingForComment(userId, itemId, newCommentDto.getCreate());
+        List<Booking> bookings = bookingService.findBookingForComment(userId, itemId, newCommentDto.getCreated());
         if (bookings.isEmpty()) {
             throw new IllegalStateException("Вы не можете оставлять комментарий, так как вы не бронировали данный item");
         }

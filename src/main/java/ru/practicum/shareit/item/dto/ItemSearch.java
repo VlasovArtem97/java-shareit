@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
-public interface ItemDtoSearch {
+public interface ItemSearch {
 
     Long getId();
 
