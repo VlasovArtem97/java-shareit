@@ -1,60 +1,29 @@
 package ru.practicum.shareit.item.mapper;
 
-import lombok.experimental.UtilityClass;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemOwnerDto;
-import ru.practicum.shareit.item.dto.NewItemDto;
-import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
-@UtilityClass
-public class ItemMapper {
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
 
-    public static Item mapToItem(NewItemDto itemDto) {
-        Item item = new Item();
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.getAvailable());
-        return item;
-    }
+    ItemDto toItemDto(Item item);
 
-    public static Item mapToItemFromItemDto(ItemDto itemDto) {
-        Item item = new Item();
-        item.setId(itemDto.getId());
-        item.setUserId(itemDto.getUserId());
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.getAvailable());
-        return item;
-    }
+    @Mapping(source = "user", target = "user")
+    @Mapping(source = "itemDto.id", target = "id")
+    @Mapping(source = "itemDto.name", target = "name")
+    Item toItem(ItemDto itemDto, User user);
 
-    public static Item mapToUpdateItem(UpdateItemDto updateItemDto, Item item) {
-        if (updateItemDto.getName() != null && !updateItemDto.getName().isBlank()) {
-            item.setName(updateItemDto.getName());
-        }
-        if (updateItemDto.getDescription() != null && !updateItemDto.getDescription().isBlank()) {
-            item.setDescription(updateItemDto.getDescription());
-        }
-        if (updateItemDto.getAvailable() != null) {
-            item.setAvailable(updateItemDto.getAvailable());
-        }
-        return item;
-    }
-
-    public static ItemOwnerDto mapToItemOwnerDto(Item item) {
-        ItemOwnerDto itemOwnerDto = new ItemOwnerDto();
-        itemOwnerDto.setName(item.getName());
-        itemOwnerDto.setDescription(item.getDescription());
-        return itemOwnerDto;
-    }
-
-    public static ItemDto mapToItemDto(Item item) {
-        ItemDto itemDto = new ItemDto();
-        itemDto.setId(item.getId());
-        itemDto.setUserId(item.getUserId());
-        itemDto.setName(item.getName());
-        itemDto.setDescription(item.getDescription());
-        itemDto.setAvailable(item.getAvailable());
-        return itemDto;
+    default Item toItemFromItemUpdate(ItemDto itemDto, Item item) {
+        return Item.builder()
+                .id(item.getId())
+                .name(itemDto.getName() != null && !itemDto.getName().isBlank() ? itemDto.getName() : item.getName())
+                .description(itemDto.getDescription() != null && !itemDto.getDescription().isBlank() ?
+                        itemDto.getDescription() : item.getDescription())
+                .available(itemDto.getAvailable() != null ? itemDto.getAvailable() : item.getAvailable())
+                .user(item.getUser())
+                .build();
     }
 }
