@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import ru.practicum.shareit.interfacemarker.Create;
 
@@ -33,5 +35,10 @@ public class ItemDto {
     private LocalDateTime nextBooking;
 
     private List<CommentDto> comments;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ToString.Exclude
+    @Positive(groups = {Create.class})
+    private Long requestId;
 
 }

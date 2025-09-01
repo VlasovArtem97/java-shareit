@@ -15,6 +15,9 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -35,6 +38,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
+    private final ItemRequestRepository itemRequestRepository; // TUT
 
 
     @Override
@@ -69,11 +73,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public ItemDto addNewItem(Long userId, ItemDto item) {
-        log.info("Получен запрос на добавление нового Item: {}, пользователем с id - {}", item, userId);
-        User user = userService.returnUserFindById(userId);
-        Item itemNew = itemMapper.toItem(item, user);
-        ItemDto addedItem = itemMapper.toItemDto(itemRepository.save(itemNew));
+    public ItemDto addNewItem(Item item) {
+        ItemDto addedItem = itemMapper.toItemDto(itemRepository.save(item));
         log.debug("Добавленный Item: {}", addedItem);
         return addedItem;
     }
@@ -107,5 +108,19 @@ public class ItemServiceImpl implements ItemService {
             log.debug("Список Item: {}", itemsDto);
             return itemsDto;
         }
+    }
+
+    @Override
+    public Map<Long, List<ItemDto>> findItemByRequestId(List<Long> requestId) {
+        List<Item> items = itemRepository.findItemByRequest_IdIn(requestId);
+        return items.stream()
+                .collect(Collectors.groupingBy(
+                        item -> item.getItemRequest().getId(),
+                        Collectors.mapping(
+                                itemMapper::toItemDto,
+                                Collectors.toList()
+                        )
+                ));
+
     }
 }

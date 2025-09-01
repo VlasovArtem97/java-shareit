@@ -14,7 +14,7 @@ import java.util.Map;
 public interface ItemService {
 
 
-    ItemDto addNewItem(Long userId, ItemDto item);
+    ItemDto addNewItem(Item item);
 
     ItemDto updateItem(Long userId, Long itemId, ItemDto item);
 
@@ -27,5 +27,7 @@ public interface ItemService {
     CommentDto addComment(User user, Item item, CommentDto newCommentDto);
 
     Map<Long, List<Comment>> findAllCommentsItems(List<Long> itemIds);
+
+    Map<Long, List<ItemDto>> findItemByRequestId(List<Long> requestId);
 
 }

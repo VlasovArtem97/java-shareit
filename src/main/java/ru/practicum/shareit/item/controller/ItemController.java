@@ -8,7 +8,7 @@ import ru.practicum.shareit.interfacemarker.Create;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemSearch;
-import ru.practicum.shareit.item.service.ItemBookingCommitService;
+import ru.practicum.shareit.item.service.ItemBookingCommitRequestService;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemBookingCommitService itemBookingCommitService;
+    private final ItemBookingCommitRequestService itemBookingCommitService;
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@Positive @RequestHeader("X-Sharer-User-Id") Long userId, @Positive @PathVariable Long itemId) {
@@ -36,7 +36,7 @@ public class ItemController {
     @PostMapping
     public ItemDto addNewItem(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                               @Validated(Create.class) @RequestBody ItemDto item) {
-        return itemService.addNewItem(userId, item);
+        return itemBookingCommitService.addNewItem(userId, item);
     }
 
     @PatchMapping("/{itemId}")

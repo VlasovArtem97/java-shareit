@@ -36,7 +36,7 @@ public class HandlerException {
     public Map<String, String> handlerMethodArgumentNotValid(final MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
+            errors.put("error", error.getDefaultMessage());
         }
         log.error("Ошибка валидации встроенных через @Valid - {}", errors);
         return errors;

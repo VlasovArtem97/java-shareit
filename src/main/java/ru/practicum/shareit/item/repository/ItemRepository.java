@@ -24,5 +24,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findItemByUser_Id(Long userId);
 
+    @Query("select i from Item i " +
+            "JOIN FETCH i.itemRequest r " +
+            "WHERE r.id IN :requestId")
+    List<Item> findItemByRequest_IdIn(@Param("requestId") List<Long> requestId);
+
 
 }
