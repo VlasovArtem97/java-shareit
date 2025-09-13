@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -20,11 +19,9 @@ public class BookItemRequestDto {
 
     @NotNull
     @Positive
-    private long itemId;
+    private Long itemId;
     @FutureOrPresent
-//    @JsonDeserialize(using = DeserializeLocalDateTime.class)
     private LocalDateTime start;
     @Future
-//    @JsonDeserialize(using = DeserializeLocalDateTime.class)
     private LocalDateTime end;
 }

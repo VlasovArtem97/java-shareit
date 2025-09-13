@@ -43,7 +43,6 @@ public class BookingServiceImpl implements BookingService {
             log.error("Item недоступен для бронирования, Item id: {}", newBookingDto.getItemId());
             throw new IllegalStateException("Item для бронирования недоступен");
         }
-//        validateDateTime(newBookingDto);
         Booking booking = bookingMapper.toBooking(newBookingDto, user, item);
         Booking newBooking = bookingRepository.save(booking);
         log.info("Создан новый объект Booking: {}", newBooking);
@@ -57,16 +56,10 @@ public class BookingServiceImpl implements BookingService {
                 bookingId, userId);
         Booking booking = bookingRepository.findBookingByIdAndItemUserId(userId, bookingId).orElseThrow(()
                 -> new IllegalStateException("Изменять статус Booking может только владелец Item"));
-        switch (approved.toLowerCase()) {
-            case "true":
-                booking.setStatus(Status.APPROVED);
-                break;
-            case "false":
-                booking.setStatus(Status.REJECTED);
-                break;
-            default:
-                log.error("Статус параметра отличается, вместо true или false, в параметре указано: {}", approved);
-                throw new ConflictException("Параметр статуса должен быть, либо true, либо false");
+        if (approved.equalsIgnoreCase("true")) {
+            booking.setStatus(Status.APPROVED);
+        } else {
+            booking.setStatus(Status.REJECTED);
         }
         Booking bookingUpdateStatus = bookingRepository.save(booking);
         log.debug("Статус Booking обновлен: {}", bookingUpdateStatus);
@@ -97,11 +90,6 @@ public class BookingServiceImpl implements BookingService {
             case "waiting" -> bookingRepository.findBookingContainStateFutureAndWaiting(localDateTime, Status.WAITING,
                     userId);
             default -> bookingRepository.findBookingContainStateRejected(Status.REJECTED, userId);
-//            case "rejected" -> bookingRepository.findBookingContainStateRejected(Status.REJECTED, userId);
-//            default -> {
-//                log.error("Неверный параметр запроса: {}", state);
-//                throw new ConflictException("Неверный параметр запроса");
-//            }
         };
         log.debug("Список booking - {} пользователя с id - {}", bookings, userId);
         return bookings.stream()
@@ -127,11 +115,6 @@ public class BookingServiceImpl implements BookingService {
                     bookingRepository.findBookingOwnerItemWithStateFutureAndWaiting(localDateTime, Status.WAITING,
                             userId);
             default -> bookingRepository.findBookingOwnerItemWithStateRejected(Status.REJECTED, userId);
-//            case "rejected" -> bookingRepository.findBookingOwnerItemWithStateRejected(Status.REJECTED, userId);
-//            default -> {
-//                log.error("Ошибка в параметре запроса: {}", state);
-//                throw new ConflictException("Неверный параметр запроса");
-//            }
         };
         log.debug("Размер списка booking - {} пользователя с id - {}", bookings.size(), userId);
         return bookings.stream()
@@ -144,25 +127,6 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findBookingForComment(Long userId, Long itemId, LocalDateTime now) {
         return bookingRepository.findBookingForComment(userId, itemId, now);
     }
-
-//    private void validateDateTime(BookingDto newBookingDto) {
-//        LocalDateTime now = LocalDateTime.now().minusSeconds(5);
-//        if (newBookingDto.getStart().isBefore(now)) {
-//            log.error("Дата начала бронирования не должна быть указана в прошедшем времени: начала - {}",
-//                    newBookingDto.getStart());
-//            throw new ConflictException("Дата начала бронирования не должна быть указана в прошедшем времени");
-//        }
-//        if (newBookingDto.getEnd().isBefore(newBookingDto.getStart())) {
-//            log.error("Дата окончания бронирования не должно быть раньше даты начала бронирования: начала - {}," +
-//                    " конец - {}", newBookingDto.getStart(), newBookingDto.getEnd());
-//            throw new ConflictException("Дата окончания бронирования не должно быть раньше даты начала бронирования");
-//        }
-//        if (newBookingDto.getStart().equals(newBookingDto.getEnd())) {
-//            log.error("Дата начала и конца бронирования совпадают: начала - {}," +
-//                    " конец - {}", newBookingDto.getStart(), newBookingDto.getEnd());
-//            throw new ConflictException("Дата начала и конца бронирования не должны быть равны");
-//        }
-//    }
 
     @Override
     public Map<Long, Booking> findAllBookingByItemIds(List<Long> itemIds, LocalDateTime now) {

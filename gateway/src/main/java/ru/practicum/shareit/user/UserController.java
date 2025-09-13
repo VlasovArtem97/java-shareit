@@ -16,7 +16,6 @@ import ru.practicum.shareit.interfacemarker.Update;
 public class UserController {
 
     private final UserClient userClient;
-    private static final String USER_ID = "X-Sharer-User-Id";
 
     @GetMapping
     public ResponseEntity<Object> getAllUsers() {

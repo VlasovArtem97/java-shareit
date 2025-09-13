@@ -1,8 +1,6 @@
 package ru.practicum.shareit.request.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import ru.practicum.shareit.interfacemarker.Create;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.time.LocalDateTime;
@@ -19,7 +17,6 @@ public class ItemRequestDto {
 
     private Long id;
 
-    @NotNull(groups = {Create.class})
     private String description;
 
     private LocalDateTime created = LocalDateTime.now();

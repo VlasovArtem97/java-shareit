@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +33,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> updateBookingStatus(@NotNull @Positive @RequestHeader(USER_ID) Long userId,
                                                       @NotNull @Positive @PathVariable Long bookingId,
-                                                      @NotBlank @RequestParam String approved) {
+                                                      @NotNull @NotNull @RequestParam Boolean approved) {
         return bookingClient.updateBookingStatus(userId, bookingId, approved);
     }
 
@@ -58,7 +57,7 @@ public class BookingController {
                                                    @RequestParam(defaultValue = "ALL") String state) {
 
         BookingState bookingState = BookingState.from(state)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + state));
+                .orElseThrow(() -> new IllegalStateException("Unknown state: " + state));
         return bookingClient.getBookingsOwner(userId, bookingState);
     }
 

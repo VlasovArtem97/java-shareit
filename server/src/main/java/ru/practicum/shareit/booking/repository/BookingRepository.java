@@ -151,11 +151,4 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "AND b.id = :bookingId")
     Optional<Booking> findBookingByIdAndBookerIdAndItemUserId(@Param("userId") Long userId,
                                                               @Param("bookingId") Long bookingId);
-
-    @Query("select b from Booking b " +
-            "JOIN FETCH b.item i " +
-            "JOIN FETCH i.user u " +
-            "JOIN FETCH b.booker boo " +
-            "WHERE b.id = :bookingId")
-    Optional<Booking> findBookingById(@Param("bookingId") Long bookingId);
 }

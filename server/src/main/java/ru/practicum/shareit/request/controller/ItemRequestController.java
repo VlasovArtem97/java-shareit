@@ -1,10 +1,8 @@
 package ru.practicum.shareit.request.controller;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.interfacemarker.Create;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
@@ -17,26 +15,27 @@ import java.util.List;
 public class ItemRequestController {
 
     private final ItemRequestService itemRequestService;
+    private static final String USER_ID = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemRequestDto addItemRequest(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @Validated(Create.class) @RequestBody ItemRequestDto itemRequestDto) {
+    public ItemRequestDto addItemRequest(@RequestHeader(USER_ID) Long userId,
+                                         @RequestBody ItemRequestDto itemRequestDto) {
         return itemRequestService.addItemRequest(userId, itemRequestDto);
     }
 
     @GetMapping
-    public List<ItemRequestDto> getItemRequestOwner(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemRequestDto> getItemRequestOwner(@RequestHeader(USER_ID) Long userId) {
         return itemRequestService.getItemRequestOwner(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAllItemRequest(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemRequestDto> getAllItemRequest(@RequestHeader(USER_ID) Long userId) {
         return itemRequestService.getAllItemRequest(userId);
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestDto getItemRequest(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @Positive @PathVariable Long requestId) {
+    public ItemRequestDto getItemRequest(@RequestHeader(USER_ID) Long userId,
+                                         @PathVariable Long requestId) {
         return itemRequestService.getItemRequest(userId, requestId);
     }
 
