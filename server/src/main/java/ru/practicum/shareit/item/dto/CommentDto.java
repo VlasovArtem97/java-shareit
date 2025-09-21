@@ -19,6 +19,6 @@ public class CommentDto {
     private Long id;
     private String text;
     private String authorName;
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime created = ZonedDateTime.now(ZoneOffset.ofHours(3)).toLocalDateTime();
 }

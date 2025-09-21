@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -38,7 +37,6 @@ class ItemRequestServiceImplTest {
     private final UserRepository userRepository;
     private User user;
     private List<ItemRequestDto> itemRequestDtoOwnerList;
-    private List<ItemDto> itemDtoList;
     private LocalDateTime now;
 
 

@@ -49,6 +49,4 @@ public class ItemClient extends BaseClient {
     public ResponseEntity<Object> getItemOwner(Long userId) {
         return get("", userId);
     }
-
-
 }

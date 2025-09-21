@@ -64,7 +64,7 @@ class BookingControllerTest {
 
     private Item itemTwo;
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @BeforeEach
     void setUp() {
@@ -119,7 +119,7 @@ class BookingControllerTest {
 
     @Test
     void addBooking() throws Exception {
-        when(bookingController.addBooking(anyLong(), any()))
+        when(bookingService.addBooking(anyLong(), any()))
                 .thenReturn(bookingDtoOne);
 
         mvc.perform(post("/bookings")
@@ -146,7 +146,7 @@ class BookingControllerTest {
 
     @Test
     void updateBookingStatus() throws Exception {
-        when(bookingController.updateBookingStatus(anyLong(), anyLong(), anyString()))
+        when(bookingService.updateBookingStatus(anyLong(), anyLong(), anyString()))
                 .thenReturn(bookingDtoOne);
         bookingDtoOne.setStatus(Status.APPROVED);
 
@@ -173,7 +173,7 @@ class BookingControllerTest {
 
     @Test
     void findBookingStatus() throws Exception {
-        when(bookingController.findBookingStatus(anyLong(), anyLong()))
+        when(bookingService.findBookingStatus(anyLong(), anyLong()))
                 .thenReturn(bookingDtoOne);
 
         mvc.perform(get("/bookings/{bookingId}", 1)
@@ -199,7 +199,7 @@ class BookingControllerTest {
 
     @Test
     void findBookingUser() throws Exception {
-        when(bookingController.findBookingUser(anyLong(), anyString()))
+        when(bookingService.findBookingUser(anyLong(), anyString()))
                 .thenReturn(bookingDtoList);
 
         mvc.perform(get("/bookings?state={state}", "all")

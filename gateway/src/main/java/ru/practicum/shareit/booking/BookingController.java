@@ -59,5 +59,4 @@ public class BookingController {
                 .orElseThrow(() -> new IllegalStateException("Unknown state: " + state));
         return bookingClient.getBookingsOwner(userId, bookingState);
     }
-
 }

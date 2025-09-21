@@ -27,7 +27,7 @@ public class ItemRequest {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 

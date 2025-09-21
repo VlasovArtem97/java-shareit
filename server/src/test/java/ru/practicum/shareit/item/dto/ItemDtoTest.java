@@ -19,7 +19,7 @@ class ItemDtoTest {
 
     private final JacksonTester<ItemDto> json;
     private final LocalDateTime localDateTime = LocalDateTime.now();
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @Test
     void testItemDto() throws Exception {

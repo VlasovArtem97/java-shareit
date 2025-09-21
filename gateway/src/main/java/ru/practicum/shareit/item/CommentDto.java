@@ -13,5 +13,4 @@ public class CommentDto {
 
     @NotBlank(groups = Create.class)
     private String text;
-
 }
