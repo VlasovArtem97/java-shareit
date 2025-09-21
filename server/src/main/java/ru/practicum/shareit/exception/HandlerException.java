@@ -30,30 +30,7 @@ public class HandlerException {
         log.error("Ошибка в валидации - {}", e.getMessage());
         return Map.of("error", e.getMessage());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handlerMethodArgumentNotValid(final MethodArgumentNotValidException e) {
-        Map<String, String> errors = new HashMap<>();
-        for (FieldError error : e.getBindingResult().getFieldErrors()) {
-            errors.put("error", error.getDefaultMessage());
-        }
-        log.error("Ошибка валидации встроенных через @Valid - {}", errors);
-        return errors;
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleConstraintViolation(final ConstraintViolationException e) {
-        Map<String, String> errors = new HashMap<>();
-        e.getConstraintViolations().forEach(violation -> {
-            String fieldName = violation.getPropertyPath().toString();
-            String errorMessage = violation.getMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        log.error("Ошибка валидации - {}", errors);
-        return errors;
-    }
+    
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
