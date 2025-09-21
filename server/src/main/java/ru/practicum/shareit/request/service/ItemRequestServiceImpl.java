@@ -42,8 +42,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (itemRequest.isEmpty()) {
             return new ArrayList<>();
         } else {
-            Map<Long, List<ItemDto>> itemDtos = itemService.
-                    findItemByRequestId(itemRequest.stream().map(ItemRequestDto::getId).toList());
+            Map<Long, List<ItemDto>> itemDtos = itemService
+                    .findItemByRequestId(itemRequest.stream().map(ItemRequestDto::getId).toList());
             for (ItemRequestDto itemRequestDto : itemRequest) {
                 List<ItemDto> itemDto = itemDtos.getOrDefault(itemRequestDto.getId(), Collections.emptyList());
                 itemRequestDto.setItems(itemDto);
