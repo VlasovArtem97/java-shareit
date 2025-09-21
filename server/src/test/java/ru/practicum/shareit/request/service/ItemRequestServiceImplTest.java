@@ -36,6 +36,7 @@ class ItemRequestServiceImplTest {
     private ItemRequestDto itemRequestDto;
     private final UserRepository userRepository;
     private User user;
+    private User userTwo;
     private List<ItemRequestDto> itemRequestDtoOwnerList;
     private LocalDateTime now;
 
@@ -61,6 +62,7 @@ class ItemRequestServiceImplTest {
 
         itemRequestDtoOwnerList = List.of(itemRequestDtoOwnerOne, itemRequestDtoOwnerTwo);
         user = userRepository.save(new User(null, "john@yandex.ru", "john"));
+        userTwo = userRepository.save(new User(null, "alex@yandex.ru", "alex"));
     }
 
     @Test
@@ -107,6 +109,9 @@ class ItemRequestServiceImplTest {
                 equalTo(itemRequestList.getFirst().getUser().getId()));
         assertThat("Проверка равенства id user", itemRequestDtos.getLast().getUserId(),
                 equalTo(itemRequestList.getLast().getUser().getId()));
+
+        List<ItemRequestDto> itemRequestDtos2 = itemRequestService.getItemRequestOwner(userTwo.getId());
+        assertThat("Проверка, что список пустой", itemRequestDtos2, empty());
 
     }
 

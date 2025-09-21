@@ -199,6 +199,15 @@ class ItemServiceImplTest {
         assertThat("Проверка равенства available", update.getAvailable(), equalTo(available));
         assertThrows(ValidationException.class, () -> itemService.updateItem(userTwo.getId(), itemSave.getId(), updateItemDto),
                 "Должно выброситься исключение если Item с несуществующим id не найден");
+
+        ItemDto update2 = itemService.updateItem(user.getId(), itemSave.getId(),
+                new ItemDto(null, "", "", null, null,
+                        null, null, 3L));
+        assertThat("Проверка равенства id", update2.getId(), equalTo(id));
+        assertThat("Проверка равенства name", update2.getName(), equalTo(update.getName()));
+        assertThat("Проверка равенства description", update2.getDescription(), equalTo(update.getDescription()));
+        assertThat("Проверка равенства available", update2.getAvailable(), equalTo(update.getAvailable()));
+
     }
 
     @Test

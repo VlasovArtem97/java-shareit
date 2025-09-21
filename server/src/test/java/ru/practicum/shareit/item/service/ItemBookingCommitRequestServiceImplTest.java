@@ -143,6 +143,14 @@ class ItemBookingCommitRequestServiceImplTest {
         assertThat("Проверка размера списка comments", itemDtos.getFirst().getComments().size(), equalTo(1));
         assertThat("Проверка равенства lastBooking", itemDtos.getFirst().getLastBooking(), equalTo(booking.getEnd()));
         assertThat("Проверка nextBooking == null", itemDtos.getFirst().getNextBooking(), nullValue());
+
+        booking.setStatus(Status.WAITING);
+        List<ItemDto> itemDtos2 = itemBookingCommitRequestService.getItemOwnerById(user.getId());
+        assertThat("Проверка списка ItemDto, что не пустой", itemDtos2, notNullValue());
+        assertThat("Проверка размера списка ItemDto", itemDtos2.size(), equalTo(1));
+        assertThat("Проверка равенства lastBooking", itemDtos2.getFirst().getLastBooking(), nullValue());
+        assertThat("Проверка nextBooking == null", itemDtos2.getFirst().getNextBooking(), nullValue());
+
     }
 
     @Test
