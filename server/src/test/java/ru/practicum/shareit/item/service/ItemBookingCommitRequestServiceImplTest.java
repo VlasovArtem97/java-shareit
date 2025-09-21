@@ -22,6 +22,10 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.mapper.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -47,6 +51,7 @@ class ItemBookingCommitRequestServiceImplTest {
     private final CommentMapper commentMapper;
     private final ItemBookingCommitRequestService itemBookingCommitRequestService;
     private ItemDto itemDtoTwo;
+    private ItemDto itemDtoThree;
     private User user;
     private User userTwo;
     private User userThree;
@@ -55,6 +60,9 @@ class ItemBookingCommitRequestServiceImplTest {
     private BookingDto bookingDto;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private ItemRequestDto itemRequestDto;
+    private final ItemRequestMapper itemRequestMapper;
+    private final ItemRequestRepository itemRequestRepository;
 
     @BeforeEach
     void setUp() {
@@ -80,6 +88,16 @@ class ItemBookingCommitRequestServiceImplTest {
                 .comments(null)
                 .build();
 
+        itemDtoThree = ItemDto.builder()
+                .id(null)
+                .name("item3")
+                .description("description3")
+                .available(true)
+                .lastBooking(now.plusMinutes(10))
+                .nextBooking(null)
+                .comments(null)
+                .build();
+
 
         user = userRepository.save(new User(null, "john@yandex.ru", "john"));
         userTwo = userRepository.save(new User(null, "Smith@yandex.ru", "smith"));
@@ -96,6 +114,13 @@ class ItemBookingCommitRequestServiceImplTest {
                 .itemId(itemDtoOne.getId())
                 .start(now.minusMinutes(30))
                 .end(now.minusMinutes(25))
+                .build();
+
+        itemRequestDto = ItemRequestDto.builder()
+                .id(null)
+                .items(null)
+                .created(now.minusMinutes(20))
+                .description("da")
                 .build();
     }
 
@@ -159,6 +184,7 @@ class ItemBookingCommitRequestServiceImplTest {
 
     @Test
     void addNewItem() {
+        ItemRequest itemRequest = itemRequestRepository.save(itemRequestMapper.toItemRequest(itemRequestDto, user));
         ItemDto itemDto = itemBookingCommitRequestService.addNewItem(userTwo.getId(), itemDtoTwo);
 
         TypedQuery<Item> typedQuery = entityManager.createQuery("Select i FROM Item i WHERE i.name = :name",
@@ -170,5 +196,17 @@ class ItemBookingCommitRequestServiceImplTest {
         assertThat("Проверка равенства available", item.getAvailable(), equalTo(true));
         assertThat("Проверка равенства User", item.getUser(), equalTo(userTwo));
         assertThat("Проверка request", item.getItemRequest(), nullValue());
+
+        itemDtoThree.setRequestId(itemRequest.getId());
+        ItemDto itemDto2 = itemBookingCommitRequestService.addNewItem(userThree.getId(), itemDtoThree);
+        TypedQuery<Item> typedQuery2 = entityManager.createQuery("Select i FROM Item i WHERE i.name = :name",
+                Item.class);
+        Item item2 = typedQuery.setParameter("name", itemDto2.getName()).getSingleResult();
+        assertThat("Проверка равенства id", item2.getId(), equalTo(itemDto2.getId()));
+        assertThat("Проверка равенства name", item2.getName(), equalTo(itemDto2.getName()));
+        assertThat("Проверка равенства description", item2.getDescription(), equalTo(itemDto2.getDescription()));
+        assertThat("Проверка равенства available", item2.getAvailable(), equalTo(true));
+        assertThat("Проверка равенства User", item2.getUser(), equalTo(userThree));
+        assertThat("Проверка request", item2.getItemRequest(), equalTo(itemRequest));
     }
 }
