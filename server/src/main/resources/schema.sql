@@ -1,5 +1,5 @@
---ALTER TABLE IF EXISTS items DROP CONSTRAINT IF EXISTS fk_items_item_request;
-DROP TABLE IF EXISTS item_requests, comments, bookings, items, users;
+-- ALTER TABLE IF EXISTS items DROP CONSTRAINT IF EXISTS fk_items_item_request;
+-- DROP TABLE IF EXISTS item_requests, comments, bookings, items, users;
 
 
 CREATE TABLE IF NOT EXISTS users (
@@ -42,6 +42,13 @@ CREATE TABLE IF NOT EXISTS item_requests (
 );
 
 ALTER TABLE items
-    ADD COLUMN item_request_id BIGINT,
-    ADD CONSTRAINT fk_items_item_request
-    FOREIGN KEY (item_request_id) REFERENCES item_requests(item_request_id);
+ADD COLUMN item_request_id BIGINT;
+
+ALTER TABLE items
+ADD CONSTRAINT fk_items_item_request
+FOREIGN KEY (item_request_id) REFERENCES item_requests(item_request_id);
+
+--ALTER TABLE items
+--    ADD COLUMN item_request_id BIGINT,
+--    ADD CONSTRAINT fk_items_item_request
+--    FOREIGN KEY (item_request_id) REFERENCES item_requests(item_request_id);

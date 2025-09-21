@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.shareit.item.model.Item;
@@ -26,6 +27,7 @@ public class ItemRequest {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
