@@ -85,7 +85,7 @@ public class ItemBookingCommitRequestServiceImpl implements ItemBookingCommitReq
     public CommentDto addComment(Long userId, Long itemId, CommentDto newCommentDto) {
         User user = userService.returnUserFindById(userId);
         Item item = itemService.returnFindItemById(itemId);
-        List<Booking> bookings = bookingService.findBookingForComment(userId, itemId, newCommentDto.getCreated().minusSeconds(1));
+        List<Booking> bookings = bookingService.findBookingForComment(userId, itemId, newCommentDto.getCreated().minusSeconds(5));
         if (bookings.isEmpty()) {
             throw new IllegalStateException("Вы не можете оставлять комментарий, так как вы не бронировали данный item");
         }
