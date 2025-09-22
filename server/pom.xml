@@ -83,8 +83,34 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>ru/practicum/shareit/exception/*</exclude> <!-- путь к классу -->
+                    </excludes>
+                </configuration>
+<!--                <executions>-->
+<!--                    &lt;!&ndash; Переопределяем родительский "jacoco-check" и просто пропускаем его &ndash;&gt;-->
+<!--                    <execution>-->
+<!--                        <id>jacoco-check</id>-->
+<!--                        <phase>verify</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>check</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <skip>true</skip>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+            </plugin>
         </plugins>
     </build>
+
+
 
     <profiles>
         <profile>

@@ -245,14 +245,12 @@
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
-                            <phase>initialize</phase>
                         </execution>
                         <execution>
                             <id>jacoco-check</id>
                             <goals>
                                 <goal>check</goal>
                             </goals>
-                            <phase>verify</phase>
                             <configuration>
                                 <rules>
                                     <rule>
@@ -295,7 +293,7 @@
                         </execution>
                         <execution>
                             <id>jacoco-report</id>
-                            <phase>verify</phase>
+                            <phase>test</phase>
                             <goals>
                                 <goal>report</goal>
                             </goals>
