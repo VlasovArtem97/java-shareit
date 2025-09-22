@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -35,6 +37,7 @@ class ItemRequestServiceImplTest {
     private final ItemRequestMapper itemRequestMapper;
     private ItemRequestDto itemRequestDto;
     private final UserRepository userRepository;
+    private final ItemMapper itemMapper;
     private User user;
     private User userTwo;
     private List<ItemRequestDto> itemRequestDtoOwnerList;
@@ -63,6 +66,70 @@ class ItemRequestServiceImplTest {
         itemRequestDtoOwnerList = List.of(itemRequestDtoOwnerOne, itemRequestDtoOwnerTwo);
         user = userRepository.save(new User(null, "john@yandex.ru", "john"));
         userTwo = userRepository.save(new User(null, "alex@yandex.ru", "alex"));
+
+    }
+
+    @Test
+    void testItemRequestMapper() {
+        ItemRequest itemRequest = itemRequestMapper.toItemRequest(itemRequestDto, user);
+
+        assertThat(itemRequest.getId(), nullValue());
+        assertThat(itemRequest.getItem(), nullValue());
+        assertThat(itemRequest.getUser(), equalTo(user));
+        assertThat(itemRequest.getCreated(), equalTo(itemRequestDto.getCreated()));
+        assertThat(itemRequest.getDescription(), equalTo(itemRequestDto.getDescription()));
+
+        ItemRequest itemRequest2 = itemRequestRepository.save(itemRequest);
+        Long id = itemRequest2.getId();
+        String description = itemRequest2.getDescription();
+        ItemRequestDto itemRequestDto1 = itemRequestMapper.toItemRequestDto(itemRequest2);
+        assertThat(itemRequestDto1.getId(), equalTo(id));
+        assertThat(itemRequestDto1.getItems(), nullValue());
+        assertThat(itemRequestDto1.getUserId(), equalTo(user.getId()));
+        assertThat(itemRequestDto1.getCreated(), equalTo(itemRequestDto.getCreated()));
+        assertThat(itemRequestDto1.getDescription(), equalTo(description));
+
+        User userThree = new User(3L, "smith@yandex.ru", "smith");
+        User userFour = new User(4L, "ty@yandex.ru", "ty");
+        User userFive = new User(5L, "tyy@yandex.ru", "tyy");
+
+
+        Item item = Item.builder()
+                .id(1L)
+                .name("da")
+                .description("da")
+                .available(true)
+                .user(userThree)
+                .build();
+
+        Item item2 = Item.builder()
+                .id(2L)
+                .name("da")
+                .description("da")
+                .available(true)
+                .user(userFour)
+                .build();
+
+        ItemRequest itemRequest1 = ItemRequest.builder()
+                .id(1L)
+                .item(List.of(item, item2))
+                .created(now)
+                .description("text")
+                .user(userFive)
+                .build();
+
+        ItemRequestDto itemRequestDto2 = itemRequestMapper.toItemRequestDto(itemRequest1);
+        assertThat(itemRequestDto2.getId(), equalTo(itemRequest1.getId()));
+        assertThat(itemRequestDto2.getItems().size(), equalTo(2));
+        assertThat(itemRequestDto2.getItems().getFirst().getId(), equalTo(item.getId()));
+        assertThat(itemRequestDto2.getItems().getLast().getId(), equalTo(item2.getId()));
+        assertThat(itemRequestDto2.getItems().getFirst().getName(), equalTo(item.getName()));
+        assertThat(itemRequestDto2.getItems().getLast().getName(), equalTo(item2.getName()));
+        assertThat(itemRequestDto2.getItems().getFirst().getDescription(), equalTo(item.getDescription()));
+        assertThat(itemRequestDto2.getItems().getLast().getDescription(), equalTo(item2.getDescription()));
+        assertThat(itemRequestDto2.getItems().getFirst().getId(), equalTo(item.getId()));
+        assertThat(itemRequestDto2.getItems().getLast().getId(), equalTo(item2.getId()));
+        assertThat(itemRequestDto2.getUserId(), equalTo(userFive.getId()));
     }
 
     @Test
