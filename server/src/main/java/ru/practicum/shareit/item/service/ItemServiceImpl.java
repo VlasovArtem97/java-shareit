@@ -18,7 +18,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -97,13 +96,9 @@ public class ItemServiceImpl implements ItemService {
     public Collection<ItemSearch> searchItem(Long userId, String text) {
         log.info("Получен запрос от пользователя c id - {} на поиск item в соответствии с - {}", userId, text);
         userService.returnUserFindById(userId);
-        if (text.isBlank()) {
-            return new ArrayList<>();
-        } else {
-            Collection<ItemSearch> itemsDto = itemRepository.search(text);
-            log.debug("Список Item: {}", itemsDto);
-            return itemsDto;
-        }
+        Collection<ItemSearch> itemsDto = itemRepository.search(text);
+        log.debug("Список Item: {}", itemsDto);
+        return itemsDto;
     }
 
     @Override

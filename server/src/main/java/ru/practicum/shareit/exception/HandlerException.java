@@ -35,7 +35,7 @@ public class HandlerException {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handlerMissingRequestHeader(final MissingRequestHeaderException e) {
         log.error("Ошибка в заголовке запроса: {}", e.getMessage());
         return Map.of("error", e.getMessage());

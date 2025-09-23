@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.interfacemarker.Create;
+
+import java.util.Collections;
 
 @RestController
 @RequestMapping(path = "/items")
@@ -46,8 +47,12 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchItem(@NotNull @Positive @RequestHeader(USER_ID) Long userId,
-                                             @NotBlank @RequestParam String text) {
-        return itemClient.searchItem(userId, text);
+                                             @RequestParam String text) {
+        if (text == null || text.isBlank()) {
+            return ResponseEntity.ok().body(Collections.emptyList());
+        } else {
+            return itemClient.searchItem(userId, text);
+        }
     }
 
     @PostMapping("/{itemId}/comment")

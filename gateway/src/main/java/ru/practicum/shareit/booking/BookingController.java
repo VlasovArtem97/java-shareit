@@ -24,7 +24,7 @@ public class BookingController {
     public ResponseEntity<Object> getBookings(@NotNull @Positive @RequestHeader(USER_ID) long userId,
                                               @RequestParam(name = "state", defaultValue = "ALL") String stateParam) {
         BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+                .orElseThrow(() -> new IllegalStateException("Unknown state: " + stateParam));
         log.info("Get booking with state {}, userId={}", stateParam, userId);
         return bookingClient.getBookings(userId, state);
     }

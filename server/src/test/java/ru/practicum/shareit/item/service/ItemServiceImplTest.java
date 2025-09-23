@@ -221,8 +221,6 @@ class ItemServiceImplTest {
         assertThat("Проверка равенства available", itemSearches.getFirst().getAvailable(),
                 equalTo(itemSave.getAvailable()));
 
-        List<ItemSearch> itemSearchesBlankText = itemService.searchItem(user.getId(), "").stream().toList();
-        assertThat("Проверка пустого списка при пустом text", itemSearchesBlankText, empty());
     }
 
     @Test
